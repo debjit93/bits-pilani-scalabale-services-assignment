@@ -16,28 +16,30 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/analytics/tasks-completed", () =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    // Replace with actual logic to fetch tasks completed statistics
+    var tasksCompletedStats = new
+    {
+        TotalTasks = 150,
+        CompletedTasks = 120,
+        PendingTasks = 30
+    };
+    return tasksCompletedStats;
 })
-.WithName("GetWeatherForecast");
+.WithName("GetTasksCompletedStats");
+
+app.MapGet("/analytics/user-activity", () =>
+{
+    // Replace with actual logic to fetch user activity data
+    var userActivityData = new[]
+    {
+        new { UserId = 1, LastActive = DateTime.Now.AddMinutes(-15) },
+        new { UserId = 2, LastActive = DateTime.Now.AddHours(-1) },
+        new { UserId = 3, LastActive = DateTime.Now.AddDays(-1) }
+    };
+    return userActivityData;
+})
+.WithName("GetUserActivityData");
 
 app.Run();
-
-record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
