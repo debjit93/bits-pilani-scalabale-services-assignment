@@ -16,28 +16,30 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapPost("/users/register", (Models.User user) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    // Logic to register a new user
+    return Results.Ok(new { Message = "User registered successfully", User = user });
 })
-.WithName("GetWeatherForecast");
+.WithName("RegisterUser");
+
+app.MapPost("/users/login", (Models.LoginRequest loginRequest) =>
+{
+    // Logic to authenticate a user
+    if (loginRequest.Username == "test" && loginRequest.Password == "password") 
+    {
+        return Results.Ok(new { Message = "Login successful", Token = "example-token" });
+    }
+    return Results.Unauthorized();
+})
+.WithName("LoginUser");
+
+app.MapGet("/users/{id}", (int id) =>
+{
+    // Logic to fetch user profile details
+    var user = new Models.User(id,"testuser", "testuser@example.com"); 
+    return Results.Ok(user);
+})
+.WithName("GetUserProfile");
 
 app.Run();
-
-record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
