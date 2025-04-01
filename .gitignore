@@ -1,0 +1,80 @@
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Mono Auto Generated Files
+mono_crash.*
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+.vscode-test/
+
+# Rider directories
+.idea/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# DotNetTool artifacts
+**/.store/
+**/.stage/
+**/.nuget/
+**/.dotnet/
+
+# Visual Studio Code workspace
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+
+# NPM Packages
+node_modules/
+
+# JetBrains Rider
+.idea/
+
+# Backup files
+*.bak
+*.swp
+*.tmp
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.vspscc
+*.vssscc
+
+# Others
+*.pidb
+*.svd
+*.scc
+*.orig
+*.rej
+*.sln.docstates
