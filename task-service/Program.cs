@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using TaskService.Data;
 using TaskService.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<TaskDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("TaskDatabase")));
 
 var app = builder.Build();
 
@@ -18,43 +22,45 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var tasks = new List<TaskItem>();
-
-app.MapPost("/tasks", (TaskItem task) =>
+app.MapPost("/tasks", async (TaskItem task, TaskDbContext dbContext) =>
 {
     task.Id = Guid.NewGuid();
-    tasks.Add(task);
+    await dbContext.TaskItems.AddAsync(task);
+    await dbContext.SaveChangesAsync();
     return Results.Created($"/tasks/{task.Id}", task);
 })
 .WithName("CreateTask");
 
-app.MapGet("/tasks", () =>
+app.MapGet("/tasks", async (TaskDbContext dbContext) =>
 {
+    var tasks = await dbContext.TaskItems.ToListAsync();
     return Results.Ok(tasks);
 })
 .WithName("GetTasks");
 
-app.MapPut("/tasks/{id}", (Guid id, TaskItem updatedTask) =>
+app.MapPut("/tasks/{id}", async (Guid id, TaskItem updatedTask, TaskDbContext dbContext) =>
 {
-    var task = tasks.FirstOrDefault(t => t.Id == id);
+    var task = await dbContext.TaskItems.FindAsync(id);
     if (task is null)
     {
         return Results.NotFound();
     }
     task.Name = updatedTask.Name;
     task.IsComplete = updatedTask.IsComplete;
+    await dbContext.SaveChangesAsync();
     return Results.NoContent();
 })
 .WithName("UpdateTask");
 
-app.MapDelete("/tasks/{id}", (Guid id) =>
+app.MapDelete("/tasks/{id}", async (Guid id, TaskDbContext dbContext) =>
 {
-    var task = tasks.FirstOrDefault(t => t.Id == id);
+    var task = await dbContext.TaskItems.FindAsync(id);
     if (task is null)
     {
         return Results.NotFound();
     }
-    tasks.Remove(task);
+    dbContext.TaskItems.Remove(task);
+    await dbContext.SaveChangesAsync();
     return Results.NoContent();
 })
 .WithName("DeleteTask");
