@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "0wqIV9zp3SEzvnoG/FMhpreRGBPO0pYeXkvwHwEximJi8UznBsX8Zx9vYE6lTnNX9Cfl74D0FSeunrUVWB4Hqw==",
+  "success": true,
+  "projectFilePath": "/workspaces/bits-pilani-scalabale-services-assignment/analytics-service/analytics-service.csproj",
+  "expectedPackageFiles": [
+    "/home/vscode/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "/home/vscode/.nuget/packages/microsoft.openapi/1.2.3/microsoft.openapi.1.2.3.nupkg.sha512",
+    "/home/vscode/.nuget/packages/swashbuckle.aspnetcore/6.5.0/swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
+    "/home/vscode/.nuget/packages/swashbuckle.aspnetcore.swagger/6.5.0/swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
+    "/home/vscode/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.5.0/swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",
+    "/home/vscode/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.5.0/swashbuckle.aspnetcore.swaggerui.6.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}
