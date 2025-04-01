@@ -16,28 +16,23 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Add POST /notifications endpoint
+var notifications = new List<Notification>();
 
-app.MapGet("/weatherforecast", () =>
+app.MapPost("/notifications", (Notification notification) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    notifications.Add(notification);
+    return Results.Created($"/notifications/{notification.Id}", notification);
 })
-.WithName("GetWeatherForecast");
+.WithName("CreateNotification");
+
+// Add GET /notifications endpoint
+app.MapGet("/notifications", () =>
+{
+    return Results.Ok(notifications);
+})
+.WithName("GetNotifications");
 
 app.Run();
 
-record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+record Notification(Guid Id, string Message, DateTime CreatedAt);
