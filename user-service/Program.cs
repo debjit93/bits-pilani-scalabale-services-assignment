@@ -45,7 +45,7 @@ app.MapPost("/users/login", (Models.LoginRequest loginRequest) =>
     var user = users.FirstOrDefault(u => u.Username == loginRequest.Username && u.Password == hashedPassword);
     if (user != null)
     {
-        return Results.Ok(new { Message = "Login successful", Token = "example-token" });
+        return Results.Ok(new { Message = "Login successful", Id = user.Id });
     }
     return Results.Unauthorized();
 })
