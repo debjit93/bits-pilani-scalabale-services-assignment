@@ -1,16 +1,17 @@
-using System.Collections.Concurrent;
-using System.Net.Http.Json;
-using Models; // Import the models namespace
-
+using Models; 
 public class NotificationSchedulerService : BackgroundService
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly INotificationRepository _notificationRepository;
+    private readonly string _taskServiceUrl;
+    private readonly string _userServiceUrl;
 
-    public NotificationSchedulerService(IHttpClientFactory httpClientFactory, INotificationRepository notificationRepository)
+    public NotificationSchedulerService(IHttpClientFactory httpClientFactory, INotificationRepository notificationRepository, IConfiguration configuration)
     {
         _httpClientFactory = httpClientFactory;
         _notificationRepository = notificationRepository;
+        _taskServiceUrl = configuration["TaskServiceUrl"] ?? throw new ArgumentNullException("TaskServiceUrl is not configured.");
+        _userServiceUrl = configuration["UserServiceUrl"] ?? throw new ArgumentNullException("UserServiceUrl is not configured.");
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -21,7 +22,7 @@ public class NotificationSchedulerService : BackgroundService
             {
                 // Fetch tasks from task service
                 var client = _httpClientFactory.CreateClient();
-                var tasks = await client.GetFromJsonAsync<List<TaskItem>>("https://task-service-url/api/tasks", stoppingToken);
+                var tasks = await client.GetFromJsonAsync<List<TaskItem>>($"{_taskServiceUrl}/api/tasks", stoppingToken);
 
                 if (tasks != null)
                 {
@@ -46,7 +47,7 @@ public class NotificationSchedulerService : BackgroundService
                 {
                     // Fetch user info from user-service
                     var client = _httpClientFactory.CreateClient();
-                    var user = await client.GetFromJsonAsync<User>("https://user-service-url/api/users/" + notification.Id, stoppingToken);
+                    var user = await client.GetFromJsonAsync<User>($"{_userServiceUrl}/api/users/" + notification.Id, stoppingToken);
 
                     if (user != null)
                     {
