@@ -7,7 +7,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Register NotificationSchedulerService
-builder.Services.AddHttpClient(); // Add HttpClient for task service communication
+builder.Services.AddSingleton<INotificationRepository, NotificationRepository>(); 
+builder.Services.AddHttpClient(); 
 builder.Services.AddHostedService<NotificationSchedulerService>();
 
 var app = builder.Build();
@@ -21,20 +22,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Add POST /notifications endpoint
-var notifications = new List<Notification>();
-
-app.MapPost("/notifications", (Notification notification) =>
-{
-    notifications.Add(notification);
-    return Results.Created($"/notifications/{notification.Id}", notification);
-})
-.WithName("CreateNotification");
-
 // Add GET /notifications endpoint
-app.MapGet("/notifications", () =>
+app.MapGet("/notifications", (INotificationRepository notifications) =>
 {
-    return Results.Ok(notifications);
+    return Results.Ok(notifications.GetAllNotifications());
 })
 .WithName("GetNotifications");
 

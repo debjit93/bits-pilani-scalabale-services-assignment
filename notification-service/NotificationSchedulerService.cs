@@ -4,14 +4,13 @@ using Models; // Import the models namespace
 
 public class NotificationSchedulerService : BackgroundService
 {
-    private readonly ILogger<NotificationSchedulerService> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly List<Notification> _notifications = new();
+    private readonly INotificationRepository _notificationRepository;
 
-    public NotificationSchedulerService(ILogger<NotificationSchedulerService> logger, IHttpClientFactory httpClientFactory)
+    public NotificationSchedulerService(IHttpClientFactory httpClientFactory, INotificationRepository notificationRepository)
     {
-        _logger = logger;
         _httpClientFactory = httpClientFactory;
+        _notificationRepository = notificationRepository;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,18 +30,17 @@ public class NotificationSchedulerService : BackgroundService
                     foreach (var task in incompleteTasks)
                     {
                         var notification = new Notification(task.Id, $"Task '{task.Name}' is incomplete.");
-                        _notifications.Add(notification);
-                        _logger.LogInformation($"Scheduled notification for task: {task.Name}");
+                        _notificationRepository.AddNotification(notification);
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError($"Error fetching tasks: {ex.Message}");
+                // Handle errors silently or add error handling logic if needed
             }
 
             // Process notifications
-            foreach (var notification in _notifications.ToList())
+            foreach (var notification in _notificationRepository.GetAllNotifications().ToList())
             {
                 try
                 {
@@ -52,13 +50,12 @@ public class NotificationSchedulerService : BackgroundService
 
                     if (user != null)
                     {
-                        _logger.LogInformation($"Processing notification for user {user.Name}: {notification.Message}");
-                        _notifications.Remove(notification);
+                        _notificationRepository.RemoveNotification(notification);
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
-                    _logger.LogError($"Error fetching user info for notification {notification.Id}: {ex.Message}");
+                    // Handle errors silently or add error handling logic if needed
                 }
             }
 
